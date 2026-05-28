@@ -136,7 +136,12 @@ const fallbackByCourse = {
 
 export async function ensureCourses() {
   coursesPromise ??= setupCourses();
-  await coursesPromise;
+  try {
+    await coursesPromise;
+  } catch (error) {
+    coursesPromise = null;
+    throw error;
+  }
 }
 
 async function setupCourses() {
@@ -155,49 +160,88 @@ async function setupCourses() {
   }
 }
 
-export async function getTodaySentence(courseSlug: CourseSlug = DEFAULT_COURSE) {
-  await ensureCourses();
+function fallbackSentence(courseSlug: CourseSlug, publishDate = new Date()) {
+  const date = new Date(publishDate);
+  date.setHours(0, 0, 0, 0);
 
+  return {
+    id: `fallback-${courseSlug}`,
+    ...fallbackByCourse[courseSlug],
+    courseId: courseSlug,
+    publishDate: date,
+    createdAt: date,
+    updatedAt: date,
+  };
+}
+
+export async function getTodaySentence(courseSlug: CourseSlug = DEFAULT_COURSE) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const sentence = await prisma.dailySentence.findFirst({
-    where: {
-      courseId: courseSlug,
-      publishDate: { lte: today },
-    },
-    orderBy: { publishDate: "desc" },
-  });
+  try {
+    await ensureCourses();
 
-  if (sentence) {
-    return sentence;
+    const sentence = await prisma.dailySentence.findFirst({
+      where: {
+        courseId: courseSlug,
+        publishDate: { lte: today },
+      },
+      orderBy: { publishDate: "desc" },
+    });
+
+    if (sentence) {
+      return sentence;
+    }
+
+    return prisma.dailySentence.create({
+      data: {
+        ...fallbackByCourse[courseSlug],
+        courseId: courseSlug,
+        publishDate: today,
+      },
+    });
+  } catch {
+    return fallbackSentence(courseSlug, today);
   }
-
-  return prisma.dailySentence.create({
-    data: {
-      ...fallbackByCourse[courseSlug],
-      courseId: courseSlug,
-      publishDate: today,
-    },
-  });
 }
 
 export async function getRecentSentences(courseSlug: CourseSlug = DEFAULT_COURSE, limit = 7) {
-  await ensureCourses();
+  try {
+    await ensureCourses();
 
-  return prisma.dailySentence.findMany({
-    where: { courseId: courseSlug },
-    orderBy: { publishDate: "desc" },
-    take: limit,
-  });
+    return prisma.dailySentence.findMany({
+      where: { courseId: courseSlug },
+      orderBy: { publishDate: "desc" },
+      take: limit,
+    });
+  } catch {
+    return [fallbackSentence(courseSlug)].slice(0, limit);
+  }
 }
 
 export async function getAllSentences(courseSlug?: CourseSlug) {
-  await ensureCourses();
+  try {
+    await ensureCourses();
 
-  return prisma.dailySentence.findMany({
-    where: courseSlug ? { courseId: courseSlug } : undefined,
-    orderBy: [{ courseId: "asc" }, { publishDate: "desc" }],
-    include: { course: true },
-  });
+    return prisma.dailySentence.findMany({
+      where: courseSlug ? { courseId: courseSlug } : undefined,
+      orderBy: [{ courseId: "asc" }, { publishDate: "desc" }],
+      include: { course: true },
+    });
+  } catch {
+    const courseSlugs = courseSlug ? [courseSlug] : Object.keys(courses);
+
+    return courseSlugs.map((slug) => {
+      const normalizedSlug = slug as CourseSlug;
+
+      return {
+        ...fallbackSentence(normalizedSlug),
+        course: {
+          ...courses[normalizedSlug],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      };
+    });
+  }
 }

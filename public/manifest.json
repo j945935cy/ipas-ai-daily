@@ -1,0 +1,12 @@
+{
+    "name":  "iPAS AI Daily",
+    "short_name":  "iPAS AI",
+    "description":  "為 iPAS 人工智慧應用規劃師準備的每日學習站。",
+    "start_url":  "/",
+    "display":  "standalone",
+    "background_color":  "#f6f3ee",
+    "theme_color":  "#0f7b72",
+    "icons":  [
+
+              ]
+}

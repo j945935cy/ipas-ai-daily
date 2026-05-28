@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ipas-ai-daily-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ipas
+      POSTGRES_PASSWORD: ipas_dev_password
+      POSTGRES_DB: ipas_ai_daily
+    ports:
+      - "5433:5432"
+    volumes:
+      - ipas_ai_daily_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ipas -d ipas_ai_daily"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  ipas_ai_daily_pgdata:

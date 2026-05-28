@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { ensureDatabase, prisma } from "@/lib/prisma";
+import { ensureDatabaseResponse } from "@/lib/api";
+import { prisma } from "@/lib/prisma";
 import { normalizeCourseSlug } from "@/lib/sentences";
 
 export async function POST(request: Request) {
-  await ensureDatabase();
+  const databaseError = await ensureDatabaseResponse("儲存每日內容");
+
+  if (databaseError) {
+    return databaseError;
+  }
 
   const user = await getCurrentUser();
 
@@ -50,7 +55,11 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  await ensureDatabase();
+  const databaseError = await ensureDatabaseResponse("刪除每日內容");
+
+  if (databaseError) {
+    return databaseError;
+  }
 
   const user = await getCurrentUser();
 

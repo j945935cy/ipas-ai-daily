@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getCurrentUser } from "@/lib/auth";
-import { ensureDatabase, prisma } from "@/lib/prisma";
+import { ensureDatabaseResponse } from "@/lib/api";
+import { prisma } from "@/lib/prisma";
 
 const userSelect = {
   id: true,
@@ -41,7 +42,11 @@ function normalizeUserInput(body: Record<string, unknown>) {
 }
 
 export async function GET() {
-  await ensureDatabase();
+  const databaseError = await ensureDatabaseResponse("讀取使用者");
+
+  if (databaseError) {
+    return databaseError;
+  }
 
   const { response } = await requireAdmin();
 
@@ -58,7 +63,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  await ensureDatabase();
+  const databaseError = await ensureDatabaseResponse("建立使用者");
+
+  if (databaseError) {
+    return databaseError;
+  }
 
   const { response } = await requireAdmin();
 
@@ -91,7 +100,11 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  await ensureDatabase();
+  const databaseError = await ensureDatabaseResponse("更新使用者");
+
+  if (databaseError) {
+    return databaseError;
+  }
 
   const { currentUser, response } = await requireAdmin();
 
@@ -157,7 +170,11 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  await ensureDatabase();
+  const databaseError = await ensureDatabaseResponse("刪除使用者");
+
+  if (databaseError) {
+    return databaseError;
+  }
 
   const { currentUser, response } = await requireAdmin();
 

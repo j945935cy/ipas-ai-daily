@@ -76,7 +76,11 @@ export function configureWebPush() {
 }
 
 export async function sendDailySentencePush(courseId: CourseSlug = DEFAULT_COURSE) {
-  await ensureDatabase();
+  try {
+    await ensureDatabase();
+  } catch {
+    return { sent: 0, failed: 0, skipped: true, reason: "database-unavailable" };
+  }
 
   if (!configureWebPush()) {
     return { sent: 0, failed: 0, skipped: true };

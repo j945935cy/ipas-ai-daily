@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { ensureDatabase, prisma } from "@/lib/prisma";
+import { ensureDatabaseResponse } from "@/lib/api";
+import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
-  try {
-    await ensureDatabase();
-  } catch {
-    return NextResponse.json(
-      { error: "資料庫尚未啟動，暫時無法登入。請先啟動 PostgreSQL。" },
-      { status: 503 },
-    );
+  const databaseError = await ensureDatabaseResponse("登入");
+
+  if (databaseError) {
+    return databaseError;
   }
 
   const body = await request.json();

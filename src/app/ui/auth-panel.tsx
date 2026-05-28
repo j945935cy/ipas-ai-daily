@@ -28,7 +28,7 @@ export function AuthPanel({ user }: Props) {
       }),
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => ({ error: "伺服器回應格式不正確，請稍後再試。" }));
     setLoading(false);
 
     if (!response.ok) {

@@ -4,7 +4,14 @@ import { ensureDatabase, prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
-  await ensureDatabase();
+  try {
+    await ensureDatabase();
+  } catch {
+    return NextResponse.json(
+      { error: "資料庫尚未啟動，暫時無法登入。請先啟動 PostgreSQL。" },
+      { status: 503 },
+    );
+  }
 
   const body = await request.json();
   const email = String(body.email ?? "").trim().toLowerCase();

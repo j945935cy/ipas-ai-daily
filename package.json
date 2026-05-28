@@ -7,6 +7,7 @@
     "build": "next build",
     "postinstall": "prisma generate",
     "db:push": "prisma db push --accept-data-loss",
+    "db:check": "node scripts/check-local-db.mjs",
     "db:docker:up": "docker run --name ipas-ai-daily-db -e POSTGRES_USER=ipas -e POSTGRES_PASSWORD=ipas_dev_password -e POSTGRES_DB=ipas_ai_daily -p 5433:5432 -v ipas_ai_daily_pgdata:/var/lib/postgresql/data -d postgres:16-alpine",
     "db:docker:start": "docker start ipas-ai-daily-db",
     "db:docker:stop": "docker stop ipas-ai-daily-db",

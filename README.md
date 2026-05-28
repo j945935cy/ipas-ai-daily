@@ -25,6 +25,7 @@ Useful commands:
 ```bash
 npm run lint
 npm run build
+npm run db:check
 npm run db:push
 npm run seed:local-365
 ```
@@ -32,6 +33,8 @@ npm run seed:local-365
 ## Local Database
 
 The local development database uses PostgreSQL on port `5433`.
+
+Make sure Docker Desktop or the Docker daemon is running before starting the local database. If Docker is installed but the daemon is stopped, `docker` commands will fail with `Cannot connect to the Docker daemon`.
 
 If Docker Compose is available:
 
@@ -54,6 +57,7 @@ npm run db:docker:start
 Then initialize and seed the database:
 
 ```bash
+npm run db:check
 npm run db:push
 npm run seed:365
 ```

@@ -75,7 +75,14 @@ export function configureWebPush() {
   return true;
 }
 
-export async function sendDailySentencePush(courseId: CourseSlug = DEFAULT_COURSE) {
+type SendDailySentencePushOptions = {
+  targetDate?: Date;
+};
+
+export async function sendDailySentencePush(
+  courseId: CourseSlug = DEFAULT_COURSE,
+  options: SendDailySentencePushOptions = {},
+) {
   try {
     await ensureDatabase();
   } catch {
@@ -86,7 +93,7 @@ export async function sendDailySentencePush(courseId: CourseSlug = DEFAULT_COURS
     return { sent: 0, failed: 0, skipped: true };
   }
 
-  const today = new Date();
+  const today = options.targetDate ? new Date(options.targetDate) : new Date();
   today.setHours(0, 0, 0, 0);
   const sentence = await prisma.dailySentence.findFirst({
     where: {

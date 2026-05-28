@@ -13,10 +13,18 @@ export async function GET(request: Request) {
     }
   }
 
+  const url = new URL(request.url);
+  const targetDateParam = url.searchParams.get("date");
+  const targetDate = targetDateParam ? new Date(`${targetDateParam}T00:00:00`) : undefined;
+
+  if (targetDateParam && Number.isNaN(targetDate?.getTime())) {
+    return NextResponse.json({ error: "Invalid date. Use YYYY-MM-DD." }, { status: 400 });
+  }
+
   const results = await Promise.all(
     Object.keys(courses).map(async (courseId) => ({
       courseId,
-      ...(await sendDailySentencePush(courseId as CourseSlug)),
+      ...(await sendDailySentencePush(courseId as CourseSlug, { targetDate })),
     })),
   );
 

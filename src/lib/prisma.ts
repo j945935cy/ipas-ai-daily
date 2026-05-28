@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import type { Prisma } from "@prisma/client";
 import { PrismaPostgresAdapter } from "@prisma/adapter-ppg";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Client } from "pg";
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
@@ -40,14 +41,48 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 let setupPromise: Promise<void> | null = null;
+let localDatabaseUnavailableUntil = 0;
 
 export async function ensureDatabase() {
+  await assertLocalDatabaseReachable();
   setupPromise ??= setupDatabase();
   try {
     await setupPromise;
   } catch (error) {
     setupPromise = null;
     throw error;
+  }
+}
+
+async function assertLocalDatabaseReachable() {
+  const connectionString = process.env.DATABASE_URL;
+
+  if (!connectionString?.startsWith("postgres")) {
+    return;
+  }
+
+  const databaseUrl = new URL(connectionString);
+
+  if (!["localhost", "127.0.0.1"].includes(databaseUrl.hostname)) {
+    return;
+  }
+
+  if (Date.now() < localDatabaseUnavailableUntil) {
+    throw new Error("Local database is not reachable.");
+  }
+
+  const client = new Client({
+    connectionString,
+    connectionTimeoutMillis: 500,
+  });
+
+  try {
+    await client.connect();
+  } catch {
+    localDatabaseUnavailableUntil = Date.now() + 3000;
+    throw new Error("Local database is not reachable.");
+  } finally {
+    await client.end().catch(() => {});
   }
 }
 

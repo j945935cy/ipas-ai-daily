@@ -81,4 +81,4 @@ The default production URL used by scripts is:
 https://ipas-ai-daily.vercel.app
 ```
 
-See `DEPLOYMENT.md` for cron, push notification, and database notes.
+See `DEPLOYMENT.md` for cron, push notification, and database notes. See `PRODUCTION_CHECKLIST.md` for the fastest path to copy the working English Daily Sentence deployment pattern into a separate iPAS AI Daily production setup.

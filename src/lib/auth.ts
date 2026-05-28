@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import { ensureDatabase, prisma } from "./prisma";
 
-const SESSION_COOKIE = "daily_english_session";
+const SESSION_COOKIE = "ipas_ai_daily_session";
 const secret = new TextEncoder().encode(
   process.env.AUTH_SECRET ?? "dev-secret-change-before-production",
 );

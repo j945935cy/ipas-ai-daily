@@ -41,14 +41,14 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     return null;
   }
 
-  await ensureDatabase();
-
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
 
   if (!token) {
     return null;
   }
+
+  await ensureDatabase();
 
   try {
     const { payload } = await jwtVerify(token, secret);

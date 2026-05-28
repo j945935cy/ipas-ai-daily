@@ -43,7 +43,12 @@ let setupPromise: Promise<void> | null = null;
 
 export async function ensureDatabase() {
   setupPromise ??= setupDatabase();
-  await setupPromise;
+  try {
+    await setupPromise;
+  } catch (error) {
+    setupPromise = null;
+    throw error;
+  }
 }
 
 async function setupDatabase() {

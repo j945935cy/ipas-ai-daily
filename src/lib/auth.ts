@@ -48,9 +48,9 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     return null;
   }
 
-  await ensureDatabase();
-
   try {
+    await ensureDatabase();
+
     const { payload } = await jwtVerify(token, secret);
     const userId = payload.userId;
 

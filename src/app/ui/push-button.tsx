@@ -65,16 +65,12 @@ export function PushButton({ isSignedIn, courseId = "daily-english" }: Props) {
         return;
       }
 
-      const oldSubscription = await registration.pushManager.getSubscription();
-
-      if (oldSubscription) {
-        await oldSubscription.unsubscribe();
-      }
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
-      });
+      const subscription =
+        (await registration.pushManager.getSubscription()) ??
+        (await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicKey),
+        }));
 
       const response = await fetch("/api/push/subscribe", {
         method: "POST",

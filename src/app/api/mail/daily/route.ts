@@ -25,7 +25,7 @@ export async function POST() {
 
 中文：${todaySentence.translation}
 
-文法重點：${todaySentence.grammarNote}
+核心觀念：${todaySentence.grammarNote}
 
 用法說明：${todaySentence.usageNote}
 
@@ -43,7 +43,7 @@ export async function POST() {
     <p>你好，這是今天的 iPAS AI Daily：</p>
     <p><strong>今日重點：</strong>${todaySentence.sentence}</p>
     <p><strong>中文：</strong>${todaySentence.translation}</p>
-    <p><strong>文法重點：</strong>${todaySentence.grammarNote}</p>
+    <p><strong>核心觀念：</strong>${todaySentence.grammarNote}</p>
     <p><strong>用法說明：</strong>${todaySentence.usageNote}</p>
     <p><strong>單字片語：</strong>${todaySentence.vocabulary}</p>
     <p><strong>例句練習：</strong>${todaySentence.example}</p>

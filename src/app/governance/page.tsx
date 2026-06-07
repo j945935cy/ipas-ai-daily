@@ -75,8 +75,8 @@ export default async function GovernancePage() {
 
         <aside className="side-panel">
           <div className="panel-block">
-            <h2>手機推送</h2>
-            <p>登入後可訂閱資料與治理通知。每天複習一個治理觀念，累積風險判斷力。</p>
+            <h2>每日信訂閱</h2>
+            <p>登入後可訂閱資料與治理每日信。每天複習一個治理觀念，累積風險判斷力。</p>
             <PushButton isSignedIn={Boolean(user)} courseId={GRAMMAR_COURSE} />
           </div>
 

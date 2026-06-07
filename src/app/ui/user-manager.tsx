@@ -11,7 +11,7 @@ type ManagedUser = {
   updatedAt: Date | string;
   _count: {
     learningHistory: number;
-    pushSubscriptions: number;
+    mailSubscriptions: number;
   };
 };
 
@@ -134,7 +134,7 @@ export function UserManager({ currentUserId, initialUsers }: Props) {
   }
 
   async function deleteUser(user: ManagedUser) {
-    if (!window.confirm(`確定要刪除 ${user.email}？相關學習紀錄與推播訂閱也會移除。`)) {
+    if (!window.confirm(`確定要刪除 ${user.email}？相關學習紀錄與每日信訂閱也會移除。`)) {
       return;
     }
 
@@ -319,7 +319,7 @@ export function UserManager({ currentUserId, initialUsers }: Props) {
                   <mark>{user.isAdmin ? "管理員" : "會員"}</mark>
                 </span>
                 <span role="cell">
-                  {user._count.learningHistory} 學習 / {user._count.pushSubscriptions} 推播
+                  {user._count.learningHistory} 學習 / {user._count.mailSubscriptions} 每日信
                 </span>
                 <span role="cell">{formatDate(user.createdAt)}</span>
                 <span className="row-actions" role="cell">

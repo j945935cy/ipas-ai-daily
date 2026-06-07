@@ -2,7 +2,7 @@
   "buildCommand": "npm run build",
   "crons": [
     {
-      "path": "/api/cron/daily-push",
+      "path": "/api/cron/daily-mail",
       "schedule": "0 0 * * *"
     }
   ]

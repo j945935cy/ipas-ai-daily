@@ -175,6 +175,23 @@ async function setupDatabase() {
   await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "PushSubscription_courseId_idx" ON "PushSubscription"("courseId");`);
 
   await prisma.$executeRawUnsafe(`
+    CREATE TABLE IF NOT EXISTS "MailSubscription" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "userId" TEXT NOT NULL,
+      "courseId" TEXT NOT NULL DEFAULT 'daily-english',
+      "pageUrl" TEXT,
+      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT "MailSubscription_userId_fkey"
+        FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    );
+  `);
+  await prisma.$executeRawUnsafe(
+    `CREATE UNIQUE INDEX IF NOT EXISTS "MailSubscription_userId_courseId_key" ON "MailSubscription"("userId", "courseId");`,
+  );
+  await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "MailSubscription_courseId_idx" ON "MailSubscription"("courseId");`);
+
+  await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "LearningHistory" (
       "id" TEXT NOT NULL PRIMARY KEY,
       "userId" TEXT NOT NULL,

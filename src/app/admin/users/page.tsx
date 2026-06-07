@@ -29,7 +29,7 @@ export default async function AdminUsersPage() {
       _count: {
         select: {
           learningHistory: true,
-          pushSubscriptions: true,
+          mailSubscriptions: true,
         },
       },
     },

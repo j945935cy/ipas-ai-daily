@@ -14,7 +14,7 @@ const userSelect = {
   _count: {
     select: {
       learningHistory: true,
-      pushSubscriptions: true,
+      mailSubscriptions: true,
     },
   },
 };

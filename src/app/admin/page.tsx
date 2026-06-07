@@ -11,7 +11,7 @@ import { PushTestPanel } from "../ui/push-test-panel";
 export const dynamic = "force-dynamic";
 export const metadata = pageMetadata(
   "管理後台",
-  "管理每日今日重點、查看瀏覽統計、測試推播與管理使用者。",
+  "管理每日今日重點、查看瀏覽統計、測試每日信與管理使用者。",
 );
 
 export default async function AdminPage() {

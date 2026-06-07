@@ -11,22 +11,22 @@ export function PushTestPanel() {
     setMessage("");
 
     try {
-      const response = await fetch("/api/push/send-daily", { method: "POST" });
+      const response = await fetch("/api/mail/send-daily", { method: "POST" });
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage(data.error ?? "推播測試失敗。");
+        setMessage(data.error ?? "每日信測試失敗。");
         return;
       }
 
       if (data.skipped) {
-        setMessage("推播略過：尚未設定 VAPID key 或沒有今日句子。");
+        setMessage("每日信略過：沒有訂閱者或沒有今日內容。");
         return;
       }
 
-      setMessage(`推播完成：成功 ${data.sent} 筆，失敗 ${data.failed} 筆。`);
+      setMessage(`每日信寄送完成：成功 ${data.sent} 筆，失敗 ${data.failed} 筆。`);
     } catch {
-      setMessage("推播測試失敗，請確認伺服器狀態。");
+      setMessage("每日信測試失敗，請確認伺服器狀態與 SMTP 設定。");
     } finally {
       setLoading(false);
     }
@@ -35,15 +35,15 @@ export function PushTestPanel() {
   return (
     <section className="tool-panel">
       <div>
-        <p className="eyebrow">Push</p>
-        <h2>手機推播實機測試</h2>
+        <p className="eyebrow">Mail</p>
+        <h2>每日信寄送測試</h2>
       </div>
       <p>
-        先用手機登入正式網址並允許通知，再按這個按鈕。若手機收到今日句子，代表訂閱與 Web Push
+        先用正式帳號訂閱每日信，再按這個按鈕。若信箱收到今日內容，代表訂閱與 SMTP
         都已打通。
       </p>
       <button type="button" className="primary-button" onClick={sendTest} disabled={loading}>
-        {loading ? "發送中" : "發送今日句子測試"}
+        {loading ? "寄送中" : "寄送今日每日信測試"}
       </button>
       {message ? <p className="form-message">{message}</p> : null}
     </section>

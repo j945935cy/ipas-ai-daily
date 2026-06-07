@@ -75,8 +75,8 @@ export default async function FoundationsPage() {
 
         <aside className="side-panel">
           <div className="panel-block">
-            <h2>手機推送</h2>
-            <p>登入後可訂閱 AI 基礎概念通知。每天用短概念建立 AI 基礎。</p>
+            <h2>每日信訂閱</h2>
+            <p>登入後可訂閱 AI 基礎概念每日信。每天用短概念建立 AI 基礎。</p>
             <PushButton isSignedIn={Boolean(user)} courseId={KIDS_COURSE} />
           </div>
 

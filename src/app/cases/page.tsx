@@ -75,8 +75,8 @@ export default async function CasesPage() {
 
         <aside className="side-panel">
           <div className="panel-block">
-            <h2>手機提醒</h2>
-            <p>登入後可以訂閱 AI 應用案例推播，讓手機每天收到一個導入情境與風險提醒。</p>
+            <h2>每日信訂閱</h2>
+            <p>登入後可以訂閱 AI 應用案例每日信，每天收到一個導入情境與風險提醒。</p>
             <PushButton isSignedIn={Boolean(user)} courseId={PATTERN_COURSE} />
           </div>
 

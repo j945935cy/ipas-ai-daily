@@ -1,35 +1,32 @@
 # Deployment
 
-## Required environment variables
+## Required Environment Variables
 
 Set these in the production host:
 
 - `DATABASE_URL`
 - `AUTH_SECRET`
-- `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
-- `VAPID_PRIVATE_KEY`
-- `VAPID_SUBJECT`
 - `CRON_SECRET`
+- `DAILY_EMAIL_URL`
+- `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_USER`
+- `SMTP_PASS`
 
-Generate VAPID keys:
+## Daily Mail Schedule
 
-```powershell
-npx web-push generate-vapid-keys --json
-```
+`vercel.json` runs `/api/cron/daily-mail` at `0 0 * * *`, which is 08:00 in Asia/Taipei.
 
-## Daily push schedule
-
-`vercel.json` runs `/api/cron/daily-push` at `0 0 * * *`, which is 08:00 in Asia/Taipei.
-
-## Mobile push test
+## Daily Mail Test
 
 1. Deploy the site with HTTPS.
-2. Open the production URL on a phone.
+2. Open the production URL.
 3. Register or log in.
-4. Tap `開啟每日推送` and allow notifications.
-5. Open `/admin` as an admin and click `發送今日句子測試`.
+4. Subscribe to a daily mail category.
+5. Open `/admin` as an admin and click `寄送今日每日信測試`.
+6. Confirm the subscribed mailbox receives today's iPAS AI Daily content.
 
-## Database note
+## Database Note
 
 Production uses PostgreSQL. The app expects `DATABASE_URL` to point to a persistent Postgres database such as Prisma
 Postgres, Neon, or Supabase. Run `npm run db:push` after changing the Prisma schema.

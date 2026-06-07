@@ -1,101 +1,93 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   isSignedIn: boolean;
   courseId?: string;
 };
 
-function urlBase64ToUint8Array(base64String: string) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const rawData = window.atob(base64);
-  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
-}
-
-function pushErrorMessage(error: unknown) {
-  if (error instanceof DOMException) {
-    if (error.name === "NotAllowedError") {
-      return "通知權限未開啟，請在瀏覽器網址列左側的網站設定允許通知。";
-    }
-
-    if (error.name === "InvalidStateError") {
-      return "瀏覽器保留了舊的推播訂閱，請重新整理後再按一次。";
-    }
-  }
-
-  return "訂閱失敗，請確認通知權限已允許，並重新整理頁面後再試。";
-}
-
 export function PushButton({ isSignedIn, courseId = "daily-english" }: Props) {
+  const [subscribed, setSubscribed] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function subscribe() {
+  async function toggleSubscription() {
     setMessage("");
 
     if (!isSignedIn) {
-      setMessage("請先註冊或登入。");
-      return;
-    }
-
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      setMessage("這個瀏覽器目前不支援 Web Push。");
-      return;
-    }
-
-    const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-
-    if (!publicKey) {
-      setMessage("尚未設定 VAPID public key，請先完成環境變數設定。");
+      setMessage("請先註冊或登入，再訂閱每日信。");
       return;
     }
 
     setLoading(true);
 
     try {
-      const registration = await navigator.serviceWorker.register("/sw.js");
-      await navigator.serviceWorker.ready;
-
-      const permission = await Notification.requestPermission();
-
-      if (permission !== "granted") {
-        setMessage("通知權限未開啟。");
-        return;
-      }
-
-      const subscription =
-        (await registration.pushManager.getSubscription()) ??
-        (await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(publicKey),
-        }));
-
-      const response = await fetch("/api/push/subscribe", {
-        method: "POST",
+      const response = await fetch("/api/mail/subscriptions", {
+        method: subscribed ? "DELETE" : "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...subscription.toJSON(), courseId }),
+        body: JSON.stringify({
+          courseId,
+          pageUrl: subscribed ? undefined : window.location.href,
+        }),
       });
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        setMessage(data.error ?? "訂閱失敗，請重新登入後再試。");
+        setMessage(data.error ?? "訂閱設定失敗，請稍後再試。");
         return;
       }
 
-      setMessage("已重新訂閱每日推送。");
-    } catch (error) {
-      setMessage(pushErrorMessage(error));
+      setSubscribed(!subscribed);
+      setMessage(subscribed ? "已取消這個分類的每日信。" : "已加入這個分類的每日信。每天會寄一封摘要信。");
+    } catch {
+      setMessage("訂閱設定失敗，請稍後再試。");
     } finally {
       setLoading(false);
     }
   }
 
+  useEffect(() => {
+    let active = true;
+
+    async function loadSubscription() {
+      if (!isSignedIn) {
+        setSubscribed(false);
+        return;
+      }
+
+      const response = await fetch("/api/mail/subscriptions", { credentials: "same-origin" });
+      const data = await response.json().catch(() => ({}));
+
+      if (!active || !response.ok) {
+        return;
+      }
+
+      const isSubscribed = Boolean(data.courseIds?.includes(courseId));
+      setSubscribed(isSubscribed);
+
+      if (isSubscribed) {
+        fetch("/api/mail/subscriptions", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ courseId, pageUrl: window.location.href }),
+        }).catch(() => undefined);
+      }
+    }
+
+    loadSubscription();
+
+    return () => {
+      active = false;
+    };
+  }, [courseId, isSignedIn]);
+
   return (
     <div className="push-actions">
-      <button type="button" className="primary-button" onClick={subscribe} disabled={loading}>
-        {loading ? "訂閱中" : "開啟每日推送"}
+      <button type="button" className="primary-button" onClick={toggleSubscription} disabled={loading}>
+        {loading ? "處理中" : subscribed ? "取消每日信" : "訂閱每日信"}
       </button>
       {message ? <p className="form-message">{message}</p> : null}
     </div>

@@ -27,6 +27,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "推播訂閱資料不完整。" }, { status: 400 });
   }
 
+  await prisma.pushSubscription.deleteMany({
+    where: {
+      userId: user.id,
+      courseId,
+      endpoint: { not: endpoint },
+    },
+  });
+
   await prisma.pushSubscription.upsert({
     where: { endpoint_courseId: { endpoint, courseId } },
     update: { userId: user.id, p256dh, auth },

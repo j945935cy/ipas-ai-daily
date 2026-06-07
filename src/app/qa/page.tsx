@@ -75,8 +75,8 @@ export default async function QaPage() {
 
         <aside className="side-panel">
           <div className="panel-block">
-            <h2>訂閱考點問答</h2>
-            <p>登入後可以訂閱每日考點問答推播，每天練一個iPAS AI 考試常見觀念。</p>
+            <h2>每日信訂閱</h2>
+            <p>登入後可以訂閱每日考點問答信，每天練一個 iPAS AI 考試常見觀念。</p>
             <PushButton isSignedIn={Boolean(user)} courseId={CHAT_COURSE} />
           </div>
 

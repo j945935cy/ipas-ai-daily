@@ -9,7 +9,7 @@ import { SpeakButton } from "../ui/speak-button";
 export const dynamic = "force-dynamic";
 export const metadata = pageMetadata(
   "每日 AI 重點",
-  "每天整理一個 iPAS AI 備考核心觀念，搭配中文解釋、關鍵詞、例子與手機推播。",
+  "每天整理一個 iPAS AI 備考核心觀念，搭配中文解釋、關鍵詞、例子與每日信訂閱。",
 );
 
 export default async function DailyPage() {
@@ -75,8 +75,8 @@ export default async function DailyPage() {
 
         <aside className="side-panel">
           <div className="panel-block">
-            <h2>手機推送</h2>
-            <p>登入後可訂閱每日 AI 重點通知。手機會收到今天的備考重點，方便固定複習。</p>
+            <h2>每日信訂閱</h2>
+            <p>登入後可訂閱每日 AI 重點信。每天會收到今天的備考重點，方便固定複習。</p>
             <PushButton isSignedIn={Boolean(user)} />
           </div>
 

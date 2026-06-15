@@ -50,6 +50,31 @@ a {
   padding: 28px 0 56px;
 }
 
+.site-home-bar {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding-top: 18px;
+}
+
+.site-home-link {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--accent-dark);
+  display: inline-flex;
+  align-items: center;
+  font-weight: 800;
+  padding: 0 14px;
+  box-shadow: 0 12px 34px rgba(30, 37, 40, 0.07);
+}
+
+.site-home-link:hover,
+.site-home-link:focus-visible {
+  background: var(--accent);
+  color: #fff;
+}
+
 .topbar {
   display: flex;
   align-items: flex-start;

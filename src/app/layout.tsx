@@ -31,6 +31,11 @@ export default function RootLayout({
     <html lang="zh-Hant" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <ViewTracker />
+        <header className="site-home-bar" aria-label="Happy eBook 導覽">
+          <a href="https://happyebook.com/" className="site-home-link">
+            ← 回 Happy eBook 首頁
+          </a>
+        </header>
         {children}
       </body>
     </html>

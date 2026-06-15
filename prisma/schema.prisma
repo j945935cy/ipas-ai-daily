@@ -39,7 +39,7 @@ model Course {
 
 model DailySentence {
   id              String            @id @default(cuid())
-  courseId        String            @default("daily-english")
+  courseId        String            @default("ipas-daily")
   sentence        String
   translation     String
   grammarNote     String
@@ -59,7 +59,7 @@ model DailySentence {
 model PushSubscription {
   id        String   @id @default(cuid())
   userId    String
-  courseId  String   @default("daily-english")
+  courseId  String   @default("ipas-daily")
   endpoint  String
   p256dh     String
   auth      String
@@ -75,7 +75,7 @@ model PushSubscription {
 model MailSubscription {
   id        String   @id @default(cuid())
   userId    String
-  courseId  String   @default("daily-english")
+  courseId  String   @default("ipas-daily")
   pageUrl   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -13,32 +13,32 @@ const selectedCourseIds = new Set(
 
 const courses = [
   {
-    id: "daily-english",
-    slug: "daily-english",
+    id: "ipas-daily",
+    slug: "ipas-daily",
     name: "每日 AI 重點",
     description: "每天整理一個 iPAS AI 備考核心觀念，搭配白話說明、關鍵詞與例題方向。",
   },
   {
-    id: "kids-english",
-    slug: "kids-english",
+    id: "ipas-foundations",
+    slug: "ipas-foundations",
     name: "AI 基礎概念",
     description: "用短句拆解資料、模型、訓練、推論與評估等入門概念。",
   },
   {
-    id: "grammar-english",
-    slug: "grammar-english",
+    id: "ipas-governance",
+    slug: "ipas-governance",
     name: "資料與治理",
     description: "整理資料來源、資料品質、隱私、偏誤、治理與法規倫理等常考主題。",
   },
   {
-    id: "pattern-english",
-    slug: "pattern-english",
+    id: "ipas-cases",
+    slug: "ipas-cases",
     name: "AI 應用案例",
     description: "整合生活、產業與商業導入情境，練習判斷需求、資料、效益與風險。",
   },
   {
-    id: "chat-english",
-    slug: "chat-english",
+    id: "ipas-qa",
+    slug: "ipas-qa",
     name: "考點問答",
     description: "用問答形式複習容易混淆的觀念，幫助考前快速回想。",
   },
@@ -168,11 +168,11 @@ const frameNotes = [
 ];
 
 const topicsByCourse = {
-  "daily-english": dailyFocusTopics,
-  "kids-english": foundationTopics,
-  "grammar-english": governanceTopics,
-  "pattern-english": caseTopics,
-  "chat-english": qaTopics,
+  "ipas-daily": dailyFocusTopics,
+  "ipas-foundations": foundationTopics,
+  "ipas-governance": governanceTopics,
+  "ipas-cases": caseTopics,
+  "ipas-qa": qaTopics,
 };
 
 function publishDate(day) {

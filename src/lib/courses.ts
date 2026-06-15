@@ -1,14 +1,14 @@
-export const DEFAULT_COURSE = "daily-english";
-export const KIDS_COURSE = "kids-english";
-export const MOTIVATION_COURSE = "motivational-english";
-export const GRAMMAR_COURSE = "grammar-english";
-export const PHRASE_COURSE = "phrase-english";
-export const PATTERN_COURSE = "pattern-english";
-export const AI_COURSE = "ai-knowledge-english";
-export const TRAVEL_COURSE = "travel-english";
-export const LIFE_COURSE = "life-english";
-export const BUSINESS_COURSE = "business-english";
-export const CHAT_COURSE = "chat-english";
+export const DEFAULT_COURSE = "ipas-daily";
+export const KIDS_COURSE = "ipas-foundations";
+export const MOTIVATION_COURSE = "ipas-study-rhythm";
+export const GRAMMAR_COURSE = "ipas-governance";
+export const PHRASE_COURSE = "ipas-terms";
+export const PATTERN_COURSE = "ipas-cases";
+export const AI_COURSE = "ipas-core";
+export const TRAVEL_COURSE = "ipas-industry-cases";
+export const LIFE_COURSE = "ipas-life-ai";
+export const BUSINESS_COURSE = "ipas-business-adoption";
+export const CHAT_COURSE = "ipas-qa";
 
 export const courses = {
   [DEFAULT_COURSE]: {

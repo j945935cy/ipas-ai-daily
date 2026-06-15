@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 function getVisitorId() {
-  const key = "daily-english-visitor-id";
+  const key = "ipas-daily-visitor-id";
   let visitorId = window.localStorage.getItem(key);
 
   if (!visitorId) {

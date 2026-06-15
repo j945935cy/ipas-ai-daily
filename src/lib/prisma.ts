@@ -101,17 +101,25 @@ async function setupDatabase() {
   await prisma.$executeRawUnsafe(`
     INSERT INTO "Course" ("id", "slug", "name", "description", "updatedAt")
     VALUES
-      ('daily-english', 'daily-english', '每日 AI 重點', '每天整理一個 iPAS AI 備考核心觀念。', CURRENT_TIMESTAMP),
-      ('kids-english', 'kids-english', 'AI 基礎概念', '用短句拆解資料、模型、訓練、推論與評估等入門概念。', CURRENT_TIMESTAMP),
-      ('grammar-english', 'grammar-english', '資料與治理', '整理資料來源、資料品質、隱私、偏誤、治理與法規倫理等常考主題。', CURRENT_TIMESTAMP),
-      ('pattern-english', 'pattern-english', 'AI 應用案例', '整合生活、產業與商業導入情境，練習判斷需求、資料、效益與風險。', CURRENT_TIMESTAMP),
-      ('chat-english', 'chat-english', '考點問答', '用問答形式複習容易混淆的觀念，幫助考前快速回想。', CURRENT_TIMESTAMP)
+      ('ipas-daily', 'ipas-daily', '每日 AI 重點', '每天整理一個 iPAS AI 備考核心觀念。', CURRENT_TIMESTAMP),
+      ('ipas-foundations', 'ipas-foundations', 'AI 基礎概念', '用短句拆解資料、模型、訓練、推論與評估等入門概念。', CURRENT_TIMESTAMP),
+      ('ipas-governance', 'ipas-governance', '資料與治理', '整理資料來源、資料品質、隱私、偏誤、治理與法規倫理等常考主題。', CURRENT_TIMESTAMP),
+      ('ipas-cases', 'ipas-cases', 'AI 應用案例', '整合生活、產業與商業導入情境，練習判斷需求、資料、效益與風險。', CURRENT_TIMESTAMP),
+      ('ipas-qa', 'ipas-qa', '考點問答', '用問答形式複習容易混淆的觀念，幫助考前快速回想。', CURRENT_TIMESTAMP)
     ON CONFLICT ("id") DO UPDATE SET
       "slug" = EXCLUDED."slug",
       "name" = EXCLUDED."name",
       "description" = EXCLUDED."description",
       "updatedAt" = CURRENT_TIMESTAMP;
   `);
+
+  const legacyCoursePairs = [
+    ["daily-english", "ipas-daily"],
+    ["kids-english", "ipas-foundations"],
+    ["grammar-english", "ipas-governance"],
+    ["pattern-english", "ipas-cases"],
+    ["chat-english", "ipas-qa"],
+  ] as const;
 
   await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "User" (
@@ -129,7 +137,7 @@ async function setupDatabase() {
   await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "DailySentence" (
       "id" TEXT NOT NULL PRIMARY KEY,
-      "courseId" TEXT NOT NULL DEFAULT 'daily-english',
+      "courseId" TEXT NOT NULL DEFAULT 'ipas-daily',
       "sentence" TEXT NOT NULL,
       "translation" TEXT NOT NULL,
       "grammarNote" TEXT NOT NULL,
@@ -142,9 +150,16 @@ async function setupDatabase() {
     );
   `);
   await prisma.$executeRawUnsafe(
-    `ALTER TABLE "DailySentence" ADD COLUMN IF NOT EXISTS "courseId" TEXT NOT NULL DEFAULT 'daily-english';`,
+    `ALTER TABLE "DailySentence" ADD COLUMN IF NOT EXISTS "courseId" TEXT NOT NULL DEFAULT 'ipas-daily';`,
   );
-  await prisma.$executeRawUnsafe(`UPDATE "DailySentence" SET "courseId" = 'daily-english' WHERE "courseId" IS NULL;`);
+  await prisma.$executeRawUnsafe(`UPDATE "DailySentence" SET "courseId" = 'ipas-daily' WHERE "courseId" IS NULL;`);
+  for (const [legacyCourseId, ipasCourseId] of legacyCoursePairs) {
+    await prisma.$executeRawUnsafe(
+      `UPDATE "DailySentence" SET "courseId" = $1 WHERE "courseId" = $2;`,
+      ipasCourseId,
+      legacyCourseId,
+    );
+  }
   await prisma.$executeRawUnsafe(`DROP INDEX IF EXISTS "DailySentence_publishDate_key";`);
   await prisma.$executeRawUnsafe(
     `CREATE UNIQUE INDEX IF NOT EXISTS "DailySentence_courseId_publishDate_key" ON "DailySentence"("courseId", "publishDate");`,
@@ -155,7 +170,7 @@ async function setupDatabase() {
     CREATE TABLE IF NOT EXISTS "PushSubscription" (
       "id" TEXT NOT NULL PRIMARY KEY,
       "userId" TEXT NOT NULL,
-      "courseId" TEXT NOT NULL DEFAULT 'daily-english',
+      "courseId" TEXT NOT NULL DEFAULT 'ipas-daily',
       "endpoint" TEXT NOT NULL,
       "p256dh" TEXT NOT NULL,
       "auth" TEXT NOT NULL,
@@ -166,8 +181,15 @@ async function setupDatabase() {
     );
   `);
   await prisma.$executeRawUnsafe(
-    `ALTER TABLE "PushSubscription" ADD COLUMN IF NOT EXISTS "courseId" TEXT NOT NULL DEFAULT 'daily-english';`,
+    `ALTER TABLE "PushSubscription" ADD COLUMN IF NOT EXISTS "courseId" TEXT NOT NULL DEFAULT 'ipas-daily';`,
   );
+  for (const [legacyCourseId, ipasCourseId] of legacyCoursePairs) {
+    await prisma.$executeRawUnsafe(
+      `UPDATE "PushSubscription" SET "courseId" = $1 WHERE "courseId" = $2;`,
+      ipasCourseId,
+      legacyCourseId,
+    );
+  }
   await prisma.$executeRawUnsafe(`DROP INDEX IF EXISTS "PushSubscription_endpoint_key";`);
   await prisma.$executeRawUnsafe(
     `CREATE UNIQUE INDEX IF NOT EXISTS "PushSubscription_endpoint_courseId_key" ON "PushSubscription"("endpoint", "courseId");`,
@@ -178,7 +200,7 @@ async function setupDatabase() {
     CREATE TABLE IF NOT EXISTS "MailSubscription" (
       "id" TEXT NOT NULL PRIMARY KEY,
       "userId" TEXT NOT NULL,
-      "courseId" TEXT NOT NULL DEFAULT 'daily-english',
+      "courseId" TEXT NOT NULL DEFAULT 'ipas-daily',
       "pageUrl" TEXT,
       "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
       "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -186,6 +208,13 @@ async function setupDatabase() {
         FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
     );
   `);
+  for (const [legacyCourseId, ipasCourseId] of legacyCoursePairs) {
+    await prisma.$executeRawUnsafe(
+      `UPDATE "MailSubscription" SET "courseId" = $1 WHERE "courseId" = $2;`,
+      ipasCourseId,
+      legacyCourseId,
+    );
+  }
   await prisma.$executeRawUnsafe(
     `CREATE UNIQUE INDEX IF NOT EXISTS "MailSubscription_userId_courseId_key" ON "MailSubscription"("userId", "courseId");`,
   );

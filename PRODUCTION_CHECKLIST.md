@@ -55,11 +55,11 @@ npm run seed:365
 
 Expected seed coverage:
 
-- `daily-english`: Daily Focus
-- `kids-english`: Foundations
-- `grammar-english`: Data & Governance
-- `pattern-english`: Use Cases
-- `chat-english`: Q&A Drill
+- `ipas-daily`: Daily Focus
+- `ipas-foundations`: Foundations
+- `ipas-governance`: Data & Governance
+- `ipas-cases`: Use Cases
+- `ipas-qa`: Q&A Drill
 
 ## Deploy
 

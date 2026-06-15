@@ -7,7 +7,7 @@ type Props = {
   courseId?: string;
 };
 
-export function PushButton({ isSignedIn, courseId = "daily-english" }: Props) {
+export function PushButton({ isSignedIn, courseId = "ipas-daily" }: Props) {
   const [subscribed, setSubscribed] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
